@@ -2,7 +2,7 @@ import { Config, ProjectFlavor } from './config';
 import { group, getInput, setOutput, info } from '@actions/core';
 import { publish } from './publish';
 import { chooseScheme } from './scheme';
-import { createQRCodeURL } from './url';
+import { createDeepLinkURL, createQRCodeURL } from './url';
 import { needNewDevClientBuild } from './github';
 
 function undefinedIfEmpty(string: string): string | undefined {
@@ -53,8 +53,15 @@ export async function run(): Promise<void> {
 		return Promise.resolve(qrCode);
 	});
 
+	const deepLinkURL = await group('Create deep link URL', () => {
+		const deepLink = createDeepLinkURL(manifestURL, scheme);
+		info(`Deep link is: ${deepLink}`);
+		return Promise.resolve(deepLink);
+	});
+
 	setOutput('EXPO_MANIFEST_URL', manifestURL);
 	setOutput('EXPO_QR_CODE_URL', QRCodeURL);
+	setOutput('EXPO_DEEP_LINK_URL', deepLinkURL);
 	setOutput('EXPO_NEW_BUILD_IS_REQUIRED', needToRebuildDevClient);
 	setOutput(
 		'EXPO_NEW_BUILD_IS_REQUIRED_MESSAGE',

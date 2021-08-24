@@ -12,3 +12,7 @@ export function createQRCodeURL(projectFlavor: ProjectFlavor, manifestURL: strin
 
 	throw new Error('Unknown project flavor.');
 }
+
+export function createDeepLinkURL(manifestURL: string, scheme: string): string {
+	return `${scheme}://expo-development-client/?url=${manifestURL}`;
+}
